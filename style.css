@@ -135,7 +135,7 @@ body, html {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -52%); /* Subido un poco más para dar espacio a los dots */
+    transform: translate(-50%, -60%); /* Subido un poco más (era -52%) para despejar el botón JUGAR */
     width: 90%;
     height: 55vh;
     overflow: hidden;
@@ -170,7 +170,7 @@ body, html {
 
 .character-item img {
     max-width: 100%;
-    max-height: 80%; /* Reducido un 5% para que el título suba */
+    max-height: 75%; /* Reducido un 5% extra para que el título suba más */
     object-fit: contain;
     image-rendering: pixelated;
     filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.7));
@@ -179,7 +179,7 @@ body, html {
 .character-name {
     color: #00ffff;
     font-size: 2rem;
-    margin-top: 5px; /* Reducido de 15px a 5px para acercarlo al personaje */
+    margin-top: 5px;
     text-shadow: 0 0 15px #000, 0 0 5px #00ffff;
     font-family: 'Courier New', Courier, monospace;
     letter-spacing: 2px;
@@ -188,7 +188,7 @@ body, html {
 /* Indicadores de Carousel */
 #carousel-dots {
     position: absolute;
-    bottom: 23%; /* Bajado del 26% al 23% para que queden mejor centrados */
+    bottom: 30%; /* Subido del 23% al 30% para alejarlo completamente del botón JUGAR */
     display: flex;
     gap: 12px;
 }
