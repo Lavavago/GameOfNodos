@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Game of Nodes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Música de Ambiente -->
+        <audio id="bg-music" loop>
+            <source src="tatamusic-battle-warrior-fighting-drums-478210.mp3" type="audio/mpeg">
+        </audio>
+
+        <!-- Pantalla de Intro (Video) -->
+        <div id="screen-intro" class="screen active">
+            <div class="content">
+                <div id="intro-overlay">
+                    <button id="btn-start-game" class="game-button-large">INICIAR EXPERIENCIA</button>
+                    <p class="tap-text">Toca para comenzar</p>
+                </div>
+                <video id="intro-video" class="bg-video" muted playsinline>
+                    <source src="IntroDelJuego.mp4" type="video/mp4">
+                    Tu navegador no soporta videos.
+                </video>
+                <!-- Botón para saltar intro (opcional para UX) -->
+                <button id="btn-skip-intro" class="skip-button" style="display: none;">SALTAR INTRO</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Inicio -->
+        <div id="screen-inicio" class="screen">
+            <div class="content">
+                <img src="inicio.jpeg" alt="Game of Nodes Inicio" class="bg-image">
+                <div class="button-container">
+                    <button id="btn-jugar" class="game-button">JUGAR</button>
+                    <button id="btn-instrucciones" class="game-button">INSTRUCCIONES</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Instrucciones -->
+        <div id="screen-instrucciones" class="screen">
+            <div class="content">
+                <img src="instrucciones.jpeg" alt="Instrucciones" class="bg-image">
+                <!-- Botón Continuar invisible sobre el botón de la imagen -->
+                <div class="button-container-instructions">
+                    <button id="btn-continuar-inst" class="invisible-button"></button>
+                </div>
+                <button id="btn-volver-inst" class="back-button">VOLVER</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Elegir Personaje -->
+        <div id="screen-elegirPersonaje" class="screen">
+            <div class="content">
+                <img src="elegirPersonaje.png" alt="Elegir Personaje" class="bg-image">
+                
+                <!-- Selector de Personajes (Carousel) -->
+                <div id="character-selector">
+                    <div id="character-track">
+                        <div class="character-item" data-name="Analista">
+                            <img src="Analista retro con lupa y gráficos.png" alt="Analista">
+                            <h2 class="character-name">ANALISTA</h2>
+                        </div>
+                        <div class="character-item" data-name="Arquitecto">
+                            <img src="Arquitecto aventurero con planos.png" alt="Arquitecto">
+                            <h2 class="character-name">ARQUITECTO</h2>
+                        </div>
+                        <div class="character-item" data-name="Chica">
+                            <img src="Chica superviviente en mundo post-apocalíptico.png" alt="Chica">
+                            <h2 class="character-name">TESTER</h2>
+                        </div>
+                        <div class="character-item" data-name="Sonic">
+                            <img src="sonic.png" alt="Sonic">
+                            <h2 class="character-name">PROGRAMADOR</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indicadores de Carousel -->
+                <div id="carousel-dots">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+
+                <!-- Botón JUGAR en la selección de personaje -->
+                <div class="button-container-selection">
+                    <button id="btn-confirmar-personaje" class="game-button">JUGAR</button>
+                </div>
+
+                <button id="btn-volver-personaje" class="back-button">VOLVER</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Espera (Loading) -->
+        <div id="screen-espera" class="screen">
+            <div class="content">
+                <img src="JugarEspera.png" alt="Cargando..." class="bg-image">
+                <div class="loading-text">PREPARANDO SISTEMA...</div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Nodo Inicial -->
+        <div id="screen-nodo-inicial" class="screen">
+            <div class="content">
+                <img src="NodoInicial.png" alt="Nodo Inicial" class="bg-image">
+                <!-- Personaje que aparecerá dinámicamente -->
+                <div id="selected-character-display">
+                    <img id="active-character-img" src="" alt="Personaje Seleccionado">
+                </div>
+                <!-- Texto debajo de RP -->
+                <div id="status-text" class="game-status-text">Nodo inicial activado</div>
+                <button id="btn-volver-juego" class="back-button">VOLVER AL MENÚ</button>
+                
+                <!-- Botón RP invisible (posicionado sobre el botón RP de la imagen) -->
+                <div id="rp-trigger-container">
+                    <button id="rp-trigger-btn" class="invisible-button"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Video Final -->
+        <div id="screen-video" class="screen">
+            <div class="content">
+                <video id="final-video" class="bg-video" muted playsinline>
+                    <source src="conexionNodos1.mp4" type="video/mp4">
+                    Tu navegador no soporta videos.
+                </video>
+                <button id="btn-volver-video" class="back-button">VOLVER AL MENÚ</button>
+            </div>
+        </div>
+
+        <!-- Capa de Transición -->
+        <div id="transition-overlay"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

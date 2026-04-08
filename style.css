@@ -1,0 +1,438 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    z-index: 1;
+}
+
+.screen.active {
+    display: flex;
+    opacity: 1;
+    z-index: 2;
+}
+
+.content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Mantener proporción en pantallas móviles */
+    background-color: #000;
+}
+
+/* Contenedor de botones para la pantalla de inicio */
+#screen-inicio .button-container {
+    position: absolute;
+    bottom: 8%; /* Ajustado un poco más abajo */
+    width: 100%;
+    height: 30%; /* Ocupa el tercio inferior aproximadamente */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centra los botones verticalmente en este 30% */
+    align-items: center;
+    gap: 18px; /* Espacio entre JUGAR e INSTRUCCIONES */
+}
+
+/* Botones invisibles para la pantalla de inicio */
+.game-button {
+    width: 70%; /* Aproximadamente el ancho de los botones en la imagen */
+    height: 70px; /* Alto aproximado de los botones */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: transparent;
+    outline: none;
+    z-index: 10;
+    transition: transform 0.1s ease;
+}
+
+/* Efecto visual al presionar (para que el usuario sienta el clic) */
+.game-button:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Botón de volver para las otras pantallas */
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background: #000;
+    border: 2px solid #00ffff;
+    color: #00ffff;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 100;
+    border-radius: 5px;
+    text-shadow: 0 0 5px #00ffff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    transition: all 0.2s ease;
+}
+
+.back-button:active {
+    background: #00ffff;
+    color: #000;
+    transform: scale(0.95);
+}
+
+/* Efecto de transición de pantalla */
+#transition-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#transition-overlay.active {
+    opacity: 1;
+}
+
+/* Selector de Personajes */
+#character-selector {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -52%); /* Subido un poco más para dar espacio a los dots */
+    width: 90%;
+    height: 55vh;
+    overflow: hidden;
+    touch-action: pan-y;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#character-track {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    height: 100%;
+}
+
+.character-item {
+    min-width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.5;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: scale(0.85);
+}
+
+.character-item.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.character-item img {
+    max-width: 100%;
+    max-height: 80%; /* Reducido un 5% para que el título suba */
+    object-fit: contain;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.7));
+}
+
+.character-name {
+    color: #00ffff;
+    font-size: 2rem;
+    margin-top: 5px; /* Reducido de 15px a 5px para acercarlo al personaje */
+    text-shadow: 0 0 15px #000, 0 0 5px #00ffff;
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: 2px;
+}
+
+/* Indicadores de Carousel */
+#carousel-dots {
+    position: absolute;
+    bottom: 23%; /* Bajado del 26% al 23% para que queden mejor centrados */
+    display: flex;
+    gap: 12px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid #00ffff;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: #00ffff;
+    box-shadow: 0 0 10px #00ffff;
+    transform: scale(1.3);
+}
+
+/* Contenedor del botón Jugar en la selección */
+.button-container-selection {
+    position: absolute;
+    bottom: 8%; /* Posición sobre el botón verde de la imagen elegirPersonaje.png */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#btn-confirmar-personaje {
+    width: 65%;
+    height: 70px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+/* Animación de entrada para los personajes */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.character-item.active img {
+    animation: float 2s ease-in-out infinite;
+}
+
+/* Pantalla de Espera */
+#screen-espera .loading-text {
+    position: absolute;
+    bottom: 15%;
+    color: #00ffff;
+    font-size: 1.2rem;
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: 3px;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Pantalla de Nodo Inicial */
+#screen-nodo-inicial .content {
+    position: relative;
+}
+
+#selected-character-display {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 250px; /* Aumentado de 120px a 250px para que resalte mucho más */
+    z-index: 5;
+}
+
+#active-character-img {
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.9)); /* Brillo más intenso */
+    animation: characterIdle 2s ease-in-out infinite;
+}
+
+@keyframes characterIdle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); } /* Movimiento un poco más amplio */
+}
+
+.game-status-text {
+    position: absolute;
+    bottom: 12%; /* Bajado para que quede dentro del área del cuadro naranja */
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ffffff; /* Blanco para mejor contraste */
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.5rem; /* Un poco más grande para que se lea bien abajo */
+    font-weight: bold;
+    text-shadow: 0 0 10px #00ffff, 0 0 5px #000;
+    background: rgba(0, 0, 0, 0.5); /* Más transparente para que se vea el fondo */
+    padding: 10px 20px;
+    border: none; /* Quitamos el borde para un look más limpio en esa zona */
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 10;
+    letter-spacing: 2px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, 20px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Botón RP invisible en Nodo Inicial */
+#rp-trigger-container {
+    position: absolute;
+    bottom: 25%; /* Ajustado sobre el botón RP de la imagen */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    width: 80px; /* Ancho del botón RP en la imagen */
+    height: 60px; /* Alto del botón RP en la imagen */
+}
+
+.invisible-button {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+}
+
+/* Efecto de pulsación para indicar que es clicable (opcional) */
+#rp-trigger-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(0, 255, 0, 0.5);
+    border-radius: 10px;
+    animation: pulseGlow 1.5s infinite;
+    pointer-events: none;
+}
+
+@keyframes pulseGlow {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.3); opacity: 0; }
+}
+
+/* Pantalla de Video Final e Intro */
+.bg-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: #000;
+}
+
+.skip-button {
+    position: absolute;
+    bottom: 50px;
+    left: 20px; /* Movido a la izquierda para mejor acceso en celular */
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #00ffff;
+    color: #00ffff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 100;
+    text-shadow: 0 0 5px #00ffff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    transition: all 0.2s ease;
+}
+
+.skip-button:active {
+    background: #00ffff;
+    color: #000;
+    transform: scale(0.95);
+}
+
+/* Overlay inicial para activar audio/video */
+#intro-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.game-button-large {
+    padding: 20px 40px;
+    background: #000;
+    border: 3px solid #00ffff;
+    color: #00ffff;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 0 0 10px #00ffff;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    border-radius: 10px;
+    animation: pulseButton 2s infinite;
+}
+
+.tap-text {
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    opacity: 0.7;
+}
+
+@keyframes pulseButton {
+    0% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 255, 255, 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(0, 255, 255, 0.6); }
+    100% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 255, 255, 0.4); }
+}
+
+/* Botón Continuar en Instrucciones */
+.button-container-instructions {
+    position: absolute;
+    bottom: 15%; /* Ajustado sobre el botón CONTINUAR de la imagen */
+    width: 60%;
+    height: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+@media (orientation: landscape) {
+    .bg-image {
+        width: auto;
+        height: 100%;
+    }
+}
