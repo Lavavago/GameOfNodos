@@ -211,21 +211,24 @@ body, html {
     transform: scale(1.3);
 }
 
-/* Contenedor del botón Jugar en la selección */
+/* Contenedor del botón Jugar en la selección - Ocupa toda la franja inferior */
 .button-container-selection {
     position: absolute;
-    bottom: 5%; /* Ajustado según la imagen */
+    bottom: 0;
+    left: 0;
     width: 100%;
-    height: 120px; /* Área táctil más grande */
+    height: 35%; /* Ocupa el 35% inferior de la pantalla */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 200; /* Aseguramos que esté por encima de los dots y el carrusel */
+    z-index: 200;
+    /* Para depurar, puedes descomentar la siguiente línea para ver el área táctil:
+    background: rgba(255, 0, 0, 0.2); */
 }
 
 #btn-confirmar-personaje {
-    width: 70%;
-    height: 100%; /* Ocupa todo el contenedor */
+    width: 100%; /* Ahora el botón ocupa todo el ancho del contenedor */
+    height: 100%; /* Y todo el alto */
     background: transparent;
     border: none;
     cursor: pointer;
