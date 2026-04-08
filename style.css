@@ -70,15 +70,16 @@ body, html {
 
 /* Botones invisibles para la pantalla de inicio */
 .game-button {
-    width: 70%; /* Aproximadamente el ancho de los botones en la imagen */
-    height: 70px; /* Alto aproximado de los botones */
+    width: 80%; /* Aumentado de 70% a 80% para mayor área táctil */
+    height: 90px; /* Aumentado de 70px a 90px para que sea más fácil de tocar */
     background: transparent;
     border: none;
     cursor: pointer;
     color: transparent;
     outline: none;
-    z-index: 10;
+    z-index: 100; /* Aseguramos que esté por encima de todo */
     transition: transform 0.1s ease;
+    touch-action: manipulation; /* Optimiza para toques rápidos */
 }
 
 /* Efecto visual al presionar (para que el usuario sienta el clic) */
@@ -317,10 +318,11 @@ body, html {
 .invisible-button {
     width: 100%;
     height: 100%;
-    background: transparent;
+    background: rgba(255, 255, 255, 0); /* Mantenemos invisible pero con un toque de alpha para mejor detección táctil */
     border: none;
     cursor: pointer;
     outline: none;
+    touch-action: manipulation;
 }
 
 /* Efecto de pulsación para indicar que es clicable (opcional) */

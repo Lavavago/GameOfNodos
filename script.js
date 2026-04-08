@@ -57,39 +57,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     }
 
-    // Configurar los eventos de clic
-    btnJugar.addEventListener('click', () => {
-        changeScreen('elegirPersonaje');
-    });
+    // Configurar los eventos de clic con mayor sensibilidad para móviles
+    const fastClick = (btn, action) => {
+        // Usamos click pero nos aseguramos que no haya nada bloqueando
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            action();
+        });
+        
+        // También podemos añadir pointerdown para respuesta visual inmediata
+        btn.addEventListener('pointerdown', () => {
+            btn.style.transform = 'scale(0.95)';
+        });
+        
+        btn.addEventListener('pointerup', () => {
+            btn.style.transform = 'scale(1)';
+        });
+        
+        btn.addEventListener('pointerleave', () => {
+            btn.style.transform = 'scale(1)';
+        });
+    };
 
-    btnInstrucciones.addEventListener('click', () => {
-        changeScreen('instrucciones');
-    });
+    fastClick(btnJugar, () => changeScreen('elegirPersonaje'));
+    fastClick(btnInstrucciones, () => changeScreen('instrucciones'));
 
-    btnVolverInst.addEventListener('click', () => {
-        changeScreen('inicio');
-    });
-
-    btnContinuarInst.addEventListener('click', () => {
-        changeScreen('elegirPersonaje');
-    });
-
-    btnVolverPersonaje.addEventListener('click', () => {
-        changeScreen('inicio');
-    });
-
-    btnVolverJuego.addEventListener('click', () => {
-        changeScreen('inicio');
-    });
-
-    btnVolverVideo.addEventListener('click', () => {
+    fastClick(btnVolverInst, () => changeScreen('inicio'));
+    fastClick(btnContinuarInst, () => changeScreen('elegirPersonaje'));
+    fastClick(btnVolverPersonaje, () => changeScreen('inicio'));
+    fastClick(btnVolverJuego, () => changeScreen('inicio'));
+    fastClick(btnVolverVideo, () => {
         finalVideo.pause();
         finalVideo.currentTime = 0;
         changeScreen('inicio');
     });
 
     // Evento para disparar el video final
-    rpTriggerBtn.addEventListener('click', () => {
+    fastClick(rpTriggerBtn, () => {
         changeScreen('video');
         finalVideo.play();
     });
@@ -203,9 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
         isDragging = false;
     });
 
-    // Botón Confirmar Personaje
+    // Botón Confirmar Personaje con mayor sensibilidad
     const btnConfirmar = document.getElementById('btn-confirmar-personaje');
-    btnConfirmar.addEventListener('click', () => {
+    fastClick(btnConfirmar, () => {
         const selectedChar = items[currentIndex].getAttribute('data-name');
         
         // Asignar la imagen del personaje seleccionado para la pantalla de juego
@@ -237,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Al iniciar la experiencia (clic inicial)
-    btnStartGame.addEventListener('click', () => {
+    fastClick(btnStartGame, () => {
         // Ocultar overlay
         introOverlay.style.display = 'none';
         // Mostrar botón skip
@@ -256,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     introVideo.addEventListener('ended', finishIntro);
 
     // Botón para saltar intro
-    btnSkipIntro.addEventListener('click', finishIntro);
+    fastClick(btnSkipIntro, finishIntro);
 
     // Inicializar la pantalla de intro
     screens.intro.classList.add('active');
