@@ -6,7 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
         elegirPersonaje: document.getElementById('screen-elegirPersonaje'),
         espera: document.getElementById('screen-espera'),
         nodoInicial: document.getElementById('screen-nodo-inicial'),
-        video: document.getElementById('screen-video')
+        video: document.getElementById('screen-video'),
+        mapaNodos: document.getElementById('screen-mapa-nodos'),
+        preguntaId: document.getElementById('screen-pregunta-id'),
+        preguntaTr: document.getElementById('screen-pregunta-tr')
     };
 
     const overlay = document.getElementById('transition-overlay');
@@ -28,6 +31,110 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnVolverVideo = document.getElementById('btn-volver-video');
     const rpTriggerBtn = document.getElementById('rp-trigger-btn');
     const finalVideo = document.getElementById('final-video');
+    const btnVolverMapa = document.getElementById('btn-volver-mapa');
+    const btnNodeId = document.getElementById('btn-node-id');
+    const btnNodeTr = document.getElementById('btn-node-tr');
+    const btnNodeSu = document.getElementById('btn-node-su');
+    const btnNodeCt = document.getElementById('btn-node-ct');
+    const btnNodeIn = document.getElementById('btn-node-in');
+    const btnNodeCi = document.getElementById('btn-node-ci');
+    const mapViewport = document.getElementById('map-viewport');
+    const mapCanvas = document.getElementById('map-canvas');
+    const btnVolverPreguntaId = document.getElementById('btn-volver-pregunta-id');
+    const btnVolverPreguntaTr = document.getElementById('btn-volver-pregunta-tr');
+    const mapCharacterDisplay = document.getElementById('map-character-display');
+    const mapCharacterImg = document.getElementById('map-character-img');
+    const mapStatusText = document.getElementById('map-status-text');
+    const nodeRp = document.getElementById('node-rp');
+    const mapQuiz = document.getElementById('map-quiz');
+    const mapQuizQuestion = document.getElementById('map-quiz-question');
+    const mapQuizA = document.getElementById('map-quiz-a');
+    const mapQuizB = document.getElementById('map-quiz-b');
+    const mapQuizC = document.getElementById('map-quiz-c');
+    const mapQuizCancel = document.getElementById('map-quiz-cancel');
+    const toast = document.getElementById('toast');
+    const lineRpId = document.getElementById('line-rp-id');
+    const lineRpTr = document.getElementById('line-rp-tr');
+    const lineIdSu = document.getElementById('line-id-su');
+    const lineTrCt = document.getElementById('line-tr-ct');
+    const lineSuIn = document.getElementById('line-su-in');
+    const lineCtIn = document.getElementById('line-ct-in');
+    const lineInCi = document.getElementById('line-in-ci');
+    const completeOverlay = document.getElementById('complete-overlay');
+    const btnCompleteHome = document.getElementById('btn-complete-home');
+
+    function getCenterInCanvas(elem) {
+        if (!mapCanvas) return null;
+        const canvasRect = mapCanvas.getBoundingClientRect();
+        const rect = elem.getBoundingClientRect();
+        if (!canvasRect.width || !rect.width) return null;
+        return {
+            x: rect.left - canvasRect.left + rect.width / 2,
+            y: rect.top - canvasRect.top + rect.height / 2
+        };
+    }
+
+    function updateLines() {
+        if (!screens.mapaNodos.classList.contains('active')) return;
+        if (!mapCanvas) return;
+
+        const rp = nodeRp ? getCenterInCanvas(nodeRp) : null;
+        const id = btnNodeId ? getCenterInCanvas(btnNodeId) : null;
+        const tr = btnNodeTr ? getCenterInCanvas(btnNodeTr) : null;
+        const su = btnNodeSu ? getCenterInCanvas(btnNodeSu) : null;
+        const ct = btnNodeCt ? getCenterInCanvas(btnNodeCt) : null;
+        const inn = btnNodeIn ? getCenterInCanvas(btnNodeIn) : null;
+        const ci = btnNodeCi ? getCenterInCanvas(btnNodeCi) : null;
+
+        if (rp && id && lineRpId) {
+            lineRpId.setAttribute('x1', rp.x);
+            lineRpId.setAttribute('y1', rp.y);
+            lineRpId.setAttribute('x2', id.x);
+            lineRpId.setAttribute('y2', id.y);
+        }
+
+        if (rp && tr && lineRpTr) {
+            lineRpTr.setAttribute('x1', rp.x);
+            lineRpTr.setAttribute('y1', rp.y);
+            lineRpTr.setAttribute('x2', tr.x);
+            lineRpTr.setAttribute('y2', tr.y);
+        }
+
+        if (id && su && lineIdSu) {
+            lineIdSu.setAttribute('x1', id.x);
+            lineIdSu.setAttribute('y1', id.y);
+            lineIdSu.setAttribute('x2', su.x);
+            lineIdSu.setAttribute('y2', su.y);
+        }
+
+        if (tr && ct && lineTrCt) {
+            lineTrCt.setAttribute('x1', tr.x);
+            lineTrCt.setAttribute('y1', tr.y);
+            lineTrCt.setAttribute('x2', ct.x);
+            lineTrCt.setAttribute('y2', ct.y);
+        }
+
+        if (su && inn && lineSuIn) {
+            lineSuIn.setAttribute('x1', su.x);
+            lineSuIn.setAttribute('y1', su.y);
+            lineSuIn.setAttribute('x2', inn.x);
+            lineSuIn.setAttribute('y2', inn.y);
+        }
+
+        if (ct && inn && lineCtIn) {
+            lineCtIn.setAttribute('x1', ct.x);
+            lineCtIn.setAttribute('y1', ct.y);
+            lineCtIn.setAttribute('x2', inn.x);
+            lineCtIn.setAttribute('y2', inn.y);
+        }
+
+        if (inn && ci && lineInCi) {
+            lineInCi.setAttribute('x1', inn.x);
+            lineInCi.setAttribute('y1', inn.y);
+            lineInCi.setAttribute('x2', ci.x);
+            lineInCi.setAttribute('y2', ci.y);
+        }
+    }
 
     // Función para cambiar de pantalla con transición
     function changeScreen(targetScreenId) {
@@ -54,6 +161,15 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 overlay.classList.remove('active');
             }, 300);
+
+            if (targetScreenId === 'mapaNodos') {
+                requestAnimationFrame(() => {
+                    syncSelectedCharacter();
+                    positionCharacterAt(mapPosition);
+                    updateLines();
+                    initMapViewport();
+                });
+            }
         }, 300);
     }
 
@@ -67,15 +183,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // También podemos añadir pointerdown para respuesta visual inmediata
         btn.addEventListener('pointerdown', () => {
-            btn.style.transform = 'scale(0.95)';
+            const target = btn.classList.contains('node-btn') ? (btn.querySelector('img') || btn) : btn;
+            target.style.transform = 'scale(0.95)';
         });
         
         btn.addEventListener('pointerup', () => {
-            btn.style.transform = 'scale(1)';
+            const target = btn.classList.contains('node-btn') ? (btn.querySelector('img') || btn) : btn;
+            target.style.transform = 'scale(1)';
         });
         
         btn.addEventListener('pointerleave', () => {
-            btn.style.transform = 'scale(1)';
+            const target = btn.classList.contains('node-btn') ? (btn.querySelector('img') || btn) : btn;
+            target.style.transform = 'scale(1)';
         });
     };
 
@@ -91,18 +210,28 @@ document.addEventListener('DOMContentLoaded', () => {
         finalVideo.currentTime = 0;
         changeScreen('inicio');
     });
+    fastClick(btnVolverMapa, () => changeScreen('inicio'));
+    fastClick(btnVolverPreguntaId, () => changeScreen('mapaNodos'));
+    fastClick(btnVolverPreguntaTr, () => changeScreen('mapaNodos'));
+    if (btnCompleteHome) fastClick(btnCompleteHome, () => {
+        if (completeOverlay) completeOverlay.classList.remove('show');
+        changeScreen('inicio');
+    });
 
     // Evento para disparar el video final
     fastClick(rpTriggerBtn, () => {
         changeScreen('video');
+        finalVideo.currentTime = 0;
         finalVideo.play();
     });
 
     // Detectar cuando el video termina para hacer la transición
     finalVideo.addEventListener('ended', () => {
-        // Pequeña espera antes de la transición de salida
         setTimeout(() => {
-            changeScreen('inicio'); // Por ahora vuelve al inicio, o a donde prefieras
+            finalVideo.pause();
+            finalVideo.currentTime = 0;
+            setMapPosition('rp');
+            changeScreen('mapaNodos');
         }, 500);
     });
 
@@ -119,6 +248,250 @@ document.addEventListener('DOMContentLoaded', () => {
         'Chica': 'Chica superviviente en mundo post-apocalíptico.png',
         'Sonic': 'sonic.png'
     };
+
+    let selectedCharacterName = null;
+    let selectedCharacterSrc = '';
+    let mapPosition = 'rp';
+    const activatedNodes = { rp: true, id: false, tr: false, su: false, ct: false, in: false, ci: false };
+    let toastTimer = null;
+    let mapViewportInitialized = false;
+    let activeQuizKey = null;
+
+    const quizDefs = {
+        id: {
+            question: '¿Cuál es el primer paso para construir el módulo de Identidad?',
+            a: 'A) Diseñar la base de datos de Usuarios y Roles',
+            b: 'B) Desarrollar la API de Autenticación',
+            c: 'C) Integrar con el proveedor KYC',
+            correct: 'A',
+            success: 'id',
+            failStay: 'rp',
+            failMsg: 'Respuesta incorrecta. Sigues en RP.'
+        },
+        tr: {
+            question: '¿Cuál es el primer paso para construir el módulo Transaccional?',
+            a: 'A) Diseñar la base de datos Transaccional',
+            b: 'B) Desarrollar la lógica de Cuentas',
+            c: 'C) Desarrollar el registro de Movimientos',
+            correct: 'A',
+            success: 'tr',
+            failStay: 'rp',
+            failMsg: 'Respuesta incorrecta. Sigues en RP.'
+        },
+        su: {
+            question: 'Una vez validada la identidad del usuario, ¿qué módulo permite gestionar su nivel de acceso y pagos recurrentes?',
+            a: 'A) Integrar la Pasarela de Pagos y gestión de Membresías (SU).',
+            b: 'B) Cambiar el fondo de pantalla de la App.',
+            c: 'C) Reinstalar el sistema operativo.',
+            correct: 'A',
+            success: 'su',
+            failStay: 'id',
+            failMsg: 'Respuesta incorrecta. Sigues en ID.'
+        },
+        ct: {
+            question: 'Después de registrar un movimiento bancario, ¿cuál es el proceso necesario para organizar el gasto automáticamente?',
+            a: 'A) Implementar el Motor de Categorización de gastos (CT).',
+            b: 'B) Enviar un mensaje de texto al banco.',
+            c: 'C) Formatear la base de datos.',
+            correct: 'A',
+            success: 'ct',
+            failStay: 'tr',
+            failMsg: 'Respuesta incorrecta. Sigues en TR.'
+        },
+        in_su: {
+            question: 'Con el sistema de pagos y membresías (SU) listo, ¿cómo vinculamos este módulo para que el sistema global reconozca los permisos del usuario?',
+            a: 'A) Realizar la integración de las API de autenticación con el servicio de suscripciones.',
+            b: 'B) Publicar la aplicación en la tienda sin probar los pagos.',
+            c: 'C) Permitir que todos los usuarios sean Premium de forma gratuita.',
+            correct: 'A',
+            success: 'in',
+            failStay: 'su',
+            failMsg: 'Respuesta incorrecta. Sigues en SU.'
+        },
+        in_ct: {
+            question: 'Ahora que los gastos están categorizados (CT), ¿qué paso es vital para que estos datos se unifiquen con los reportes y el balance general en el módulo de integración?',
+            a: 'A) Sincronizar el motor de categorización con el bus de datos central del proyecto.',
+            b: 'B) Borrar el historial de transacciones para limpiar la base de datos.',
+            c: 'C) Pedirle al usuario que sume sus gastos manualmente.',
+            correct: 'A',
+            success: 'in',
+            failStay: 'ct',
+            failMsg: 'Respuesta incorrecta. Sigues en CT.'
+        },
+        ci: {
+            question: 'Todos los módulos (Identidad, Transacciones y demás) han sido integrados en el nodo IN. ¿Cuál es la acción final necesaria para realizar el cierre formal (CI) y entregar el software al cliente?',
+            a: 'A) Realizar el despliegue a Producción y firmar el acta de aceptación con el cliente.',
+            b: 'B) Dejar el código en el computador de desarrollo y apagarlo.',
+            c: 'C) Empezar a programar una aplicación diferente sin avisar.',
+            correct: 'A',
+            success: 'ci',
+            failStay: 'in',
+            failMsg: '',
+            failMsgs: {
+                B: 'El cliente nunca recibió el producto',
+                C: 'Abandono de proyecto'
+            }
+        }
+    };
+
+    function initMapViewport() {
+        if (!mapViewport || !mapCanvas) return;
+        if (mapViewportInitialized) return;
+        mapViewportInitialized = true;
+
+        mapViewport.scrollLeft = 0;
+        mapViewport.scrollTop = Math.max(0, (mapCanvas.clientHeight - mapViewport.clientHeight) / 2);
+
+        let isPanning = false;
+        let startX = 0;
+        let startY = 0;
+        let startScrollLeft = 0;
+        let startScrollTop = 0;
+
+        mapViewport.addEventListener('pointerdown', (e) => {
+            if (e.button !== 0) return;
+            if (e.target.closest('.node-btn, .quiz-option, .quiz-cancel, .back-button')) return;
+            isPanning = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startScrollLeft = mapViewport.scrollLeft;
+            startScrollTop = mapViewport.scrollTop;
+            mapViewport.setPointerCapture(e.pointerId);
+        });
+
+        mapViewport.addEventListener('pointermove', (e) => {
+            if (!isPanning) return;
+            const dy = e.clientY - startY;
+            mapViewport.scrollTop = startScrollTop - dy;
+        });
+
+        mapViewport.addEventListener('pointerup', (e) => {
+            if (!isPanning) return;
+            isPanning = false;
+            try {
+                mapViewport.releasePointerCapture(e.pointerId);
+            } catch {}
+        });
+    }
+
+    function getMapAnchor(position) {
+        if (position === 'id') return btnNodeId;
+        if (position === 'tr') return btnNodeTr;
+        if (position === 'su') return btnNodeSu;
+        if (position === 'ct') return btnNodeCt;
+        if (position === 'in') return btnNodeIn;
+        if (position === 'ci') return btnNodeCi;
+        if (position === 'rp') return nodeRp;
+        return null;
+    }
+
+    function scrollToNode(position) {
+        if (!mapViewport) return;
+        if (!screens.mapaNodos.classList.contains('active')) return;
+        const anchor = getMapAnchor(position);
+        if (!anchor) return;
+        anchor.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+    }
+
+    function updateNodeAvailability() {
+        if (btnNodeId) btnNodeId.disabled = mapPosition !== 'rp';
+        if (btnNodeTr) btnNodeTr.disabled = mapPosition !== 'rp';
+        if (btnNodeSu) btnNodeSu.disabled = mapPosition !== 'id';
+        if (btnNodeCt) btnNodeCt.disabled = mapPosition !== 'tr';
+        if (btnNodeIn) btnNodeIn.disabled = !(mapPosition === 'su' || mapPosition === 'ct');
+        if (btnNodeCi) btnNodeCi.disabled = !activatedNodes.in;
+    }
+
+    function setLineState(line, active) {
+        if (!line) return;
+        line.classList.remove('active', 'dim');
+        line.classList.add(active ? 'active' : 'dim');
+    }
+
+    function updateLineStates() {
+        setLineState(lineRpId, activatedNodes.id);
+        setLineState(lineRpTr, activatedNodes.tr);
+        setLineState(lineIdSu, activatedNodes.su);
+        setLineState(lineTrCt, activatedNodes.ct);
+        setLineState(lineSuIn, activatedNodes.in && activatedNodes.su);
+        setLineState(lineCtIn, activatedNodes.in && activatedNodes.ct);
+        setLineState(lineInCi, activatedNodes.ci);
+    }
+
+    function positionCharacterAt(position) {
+        if (!screens.mapaNodos || !mapCharacterDisplay || !mapCanvas) return;
+        const anchor = getMapAnchor(position);
+        if (!anchor) return;
+        requestAnimationFrame(() => {
+            const canvasRect = mapCanvas.getBoundingClientRect();
+            const anchorRect = anchor.getBoundingClientRect();
+            if (!canvasRect.width || !anchorRect.width) return;
+
+            const charRect = mapCharacterDisplay.getBoundingClientRect();
+            const charW = charRect.width || 0;
+            const charH = charRect.height || 0;
+
+            const rawX = anchorRect.left - canvasRect.left + anchorRect.width / 2;
+            const footFactor = 0.85;
+            const rawBottomY = anchorRect.top - canvasRect.top + anchorRect.height * footFactor;
+
+            const minX = charW ? (charW / 2 + 8) : 0;
+            const maxX = charW ? (mapCanvas.clientWidth - charW / 2 - 8) : mapCanvas.clientWidth;
+            const x = Math.min(Math.max(rawX, minX), maxX);
+
+            const minBottomY = charH ? (charH + 8) : 0;
+            const maxBottomY = mapCanvas.clientHeight - 8;
+            const bottomY = Math.min(Math.max(rawBottomY, minBottomY), maxBottomY);
+
+            mapCharacterDisplay.style.left = `${x}px`;
+            mapCharacterDisplay.style.top = `${bottomY}px`;
+        });
+    }
+
+    function showToast(message, variant) {
+        if (!toast) return;
+        if (toastTimer) clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.remove('error', 'success', 'show');
+        if (variant) toast.classList.add(variant);
+        requestAnimationFrame(() => toast.classList.add('show'));
+        toastTimer = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2200);
+    }
+
+    function setMapPosition(nextPosition) {
+        mapPosition = nextPosition;
+        if (screens.mapaNodos && screens.mapaNodos.classList.contains('active')) {
+            positionCharacterAt(nextPosition);
+            updateNodeAvailability();
+            updateLineStates();
+            updateLines();
+            scrollToNode(nextPosition);
+        }
+
+        if (completeOverlay) completeOverlay.classList.remove('show');
+
+        if (nextPosition === 'rp') {
+            if (mapStatusText) mapStatusText.textContent = 'Elige un nodo: ID o TR';
+        } else if (nextPosition === 'id') {
+            if (mapStatusText) mapStatusText.textContent = 'Nodo ID activado';
+        } else if (nextPosition === 'tr') {
+            if (mapStatusText) mapStatusText.textContent = 'Nodo TR activado';
+        } else if (nextPosition === 'su') {
+            if (mapStatusText) mapStatusText.textContent = 'Nodo SU activado';
+        } else if (nextPosition === 'ct') {
+            if (mapStatusText) mapStatusText.textContent = 'Nodo CT activado';
+        } else if (nextPosition === 'in') {
+            if (mapStatusText) mapStatusText.textContent = 'Nodo IN activado';
+        } else if (nextPosition === 'ci') {
+            if (mapStatusText) mapStatusText.textContent = 'Nodo CI activado';
+        }
+    }
+
+    function syncSelectedCharacter() {
+        if (mapCharacterImg) mapCharacterImg.src = selectedCharacterSrc || '';
+    }
 
     let currentIndex = 0;
     let startX = 0;
@@ -210,10 +583,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Botón Confirmar Personaje con mayor sensibilidad
     const btnConfirmar = document.getElementById('btn-confirmar-personaje');
     fastClick(btnConfirmar, () => {
-        const selectedChar = items[currentIndex].getAttribute('data-name');
+        selectedCharacterName = items[currentIndex].getAttribute('data-name');
         
         // Asignar la imagen del personaje seleccionado para la pantalla de juego
-        activeCharImg.src = characterImages[selectedChar];
+        selectedCharacterSrc = characterImages[selectedCharacterName] || '';
+        activeCharImg.src = selectedCharacterSrc;
+        syncSelectedCharacter();
         
         // 1. Ir a la pantalla de espera
         changeScreen('espera');
@@ -228,11 +603,93 @@ document.addEventListener('DOMContentLoaded', () => {
     // Inicializar carrusel
     updateCarousel();
 
+    function openMapQuiz(key) {
+        if (!mapQuiz || !mapQuizQuestion || !mapQuizA || !mapQuizB || !mapQuizC) return;
+        const def = quizDefs[key];
+        if (!def) return;
+        activeQuizKey = key;
+        mapQuizQuestion.textContent = def.question;
+        mapQuizA.textContent = def.a;
+        mapQuizB.textContent = def.b;
+        mapQuizC.textContent = def.c;
+        mapQuiz.classList.remove('hidden');
+    }
+
+    function closeMapQuiz() {
+        if (!mapQuiz) return;
+        activeQuizKey = null;
+        mapQuiz.classList.add('hidden');
+    }
+
+    function answerMapQuiz(option) {
+        const def = quizDefs[activeQuizKey];
+        if (!def) return;
+        closeMapQuiz();
+        if (option !== def.correct) {
+            const msg = (def.failMsgs && def.failMsgs[option]) ? def.failMsgs[option] : def.failMsg;
+            if (msg) showToast(msg, 'error');
+            setMapPosition(def.failStay);
+            return;
+        }
+        activatedNodes[def.success] = true;
+        setMapPosition(def.success);
+        if (def.success === 'ci') {
+            if (completeOverlay) completeOverlay.classList.add('show');
+            return;
+        }
+        showToast('Correcto.', 'success');
+    }
+
+    if (mapQuizCancel) fastClick(mapQuizCancel, closeMapQuiz);
+    if (mapQuizA) fastClick(mapQuizA, () => answerMapQuiz('A'));
+    if (mapQuizB) fastClick(mapQuizB, () => answerMapQuiz('B'));
+    if (mapQuizC) fastClick(mapQuizC, () => answerMapQuiz('C'));
+
+    if (btnNodeId) fastClick(btnNodeId, () => {
+        if (mapPosition !== 'rp') return;
+        openMapQuiz('id');
+    });
+
+    if (btnNodeTr) fastClick(btnNodeTr, () => {
+        if (mapPosition !== 'rp') return;
+        openMapQuiz('tr');
+    });
+
+    if (btnNodeSu) fastClick(btnNodeSu, () => {
+        if (mapPosition !== 'id') return;
+        openMapQuiz('su');
+    });
+
+    if (btnNodeCt) fastClick(btnNodeCt, () => {
+        if (mapPosition !== 'tr') return;
+        openMapQuiz('ct');
+    });
+
+    if (btnNodeIn) fastClick(btnNodeIn, () => {
+        if (mapPosition === 'su') {
+            openMapQuiz('in_su');
+            return;
+        }
+        if (mapPosition === 'ct') {
+            openMapQuiz('in_ct');
+        }
+    });
+
+    if (btnNodeCi) fastClick(btnNodeCi, () => {
+        if (!activatedNodes.in) return;
+        openMapQuiz('ci');
+    });
+
     // --- Lógica de la Intro ---
     function finishIntro() {
         introVideo.pause();
         changeScreen('inicio');
     }
+
+    window.addEventListener('resize', () => {
+        positionCharacterAt(mapPosition);
+        updateLines();
+    });
 
     function startMusic() {
         bgMusic.play().catch(error => {

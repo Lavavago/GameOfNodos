@@ -9,9 +9,7 @@
 <body>
     <div id="game-container">
         <!-- Música de Ambiente -->
-        <audio id="bg-music" loop>
-            <source src="tatamusic-battle-warrior-fighting-drums-478210.mp3" type="audio/mpeg">
-        </audio>
+        <audio id="bg-music" loop preload="auto" src="tatamusic-battle-warrior-fighting-drums-478210.mp3"></audio>
 
         <!-- Pantalla de Intro (Video) -->
         <div id="screen-intro" class="screen active">
@@ -20,8 +18,7 @@
                     <button id="btn-start-game" class="game-button-large">INICIAR EXPERIENCIA</button>
                     <p class="tap-text">Toca para comenzar</p>
                 </div>
-                <video id="intro-video" class="bg-video" muted playsinline>
-                    <source src="IntroDelJuego.mp4" type="video/mp4">
+                <video id="intro-video" class="bg-video" muted playsinline preload="auto" src="IntroDelJuego.mp4">
                     Tu navegador no soporta videos.
                 </video>
                 <!-- Botón para saltar intro (opcional para UX) -->
@@ -126,13 +123,113 @@
         <!-- Pantalla de Video Final -->
         <div id="screen-video" class="screen">
             <div class="content">
-                <video id="final-video" class="bg-video" muted playsinline>
-                    <source src="conexionNodos1.mp4" type="video/mp4">
+                <video id="final-video" class="bg-video" muted playsinline preload="auto" src="conexionNodos1.mp4">
                     Tu navegador no soporta videos.
                 </video>
                 <button id="btn-volver-video" class="back-button">VOLVER AL MENÚ</button>
             </div>
         </div>
+
+        <div id="screen-mapa-nodos" class="screen">
+            <div class="content">
+                <button id="btn-volver-mapa" class="back-button">VOLVER AL MENÚ</button>
+
+                <div id="map-viewport" class="map-viewport">
+                    <div id="map-canvas" class="map-canvas">
+                        <img src="Conexiones futuristas en red.png" alt="Mapa de Nodos" class="map-bg">
+
+                        <svg id="node-connections" class="node-connections" width="100%" height="100%">
+                            <line id="line-rp-id" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
+                            <line id="line-rp-tr" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
+                            <line id="line-id-su" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
+                            <line id="line-tr-ct" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
+                            <line id="line-su-in" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
+                            <line id="line-ct-in" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
+                            <line id="line-in-ci" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
+                        </svg>
+
+                        <button id="btn-node-id" class="node-btn node-id" aria-label="Nodo ID">
+                            <img src="Botón futurista _ID_ pixelado.png" alt="ID">
+                        </button>
+                        <button id="btn-node-tr" class="node-btn node-tr" aria-label="Nodo TR">
+                            <img src="Botón TR pixelado con resplandor azul.png" alt="TR">
+                        </button>
+
+                        <button id="btn-node-su" class="node-btn node-su" aria-label="Nodo SU">
+                            <img src="SU azul-Photoroom.png" alt="SU">
+                        </button>
+                        <button id="btn-node-ct" class="node-btn node-ct" aria-label="Nodo CT">
+                            <img src="CT azul-Photoroom.png" alt="CT">
+                        </button>
+
+                        <button id="btn-node-in" class="node-btn node-in" aria-label="Nodo IN">
+                            <img src="IN_azul-removebg-preview.png" alt="IN">
+                        </button>
+
+                        <button id="btn-node-ci" class="node-btn node-ci" aria-label="Nodo CI">
+                            <img src="CI azul-Photoroom.png" alt="CI">
+                        </button>
+
+                        <div id="node-rp" class="node-rp" aria-hidden="true">
+                            <img src="Botón verde brillante de RP.png" alt="RP">
+                        </div>
+
+                        <div id="map-character-display" class="map-character-display">
+                            <img id="map-character-img" src="" alt="Personaje Seleccionado">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="map-status-text" class="map-status-text">Elige un nodo: ID o TR</div>
+
+                <div id="map-quiz" class="quiz-panel map-quiz hidden" role="dialog" aria-modal="true">
+                    <div class="quiz-title">Pregunta</div>
+                    <div id="map-quiz-question" class="quiz-question"></div>
+                    <button id="map-quiz-a" class="quiz-option" data-option="A"></button>
+                    <button id="map-quiz-b" class="quiz-option" data-option="B"></button>
+                    <button id="map-quiz-c" class="quiz-option" data-option="C"></button>
+                    <button id="map-quiz-cancel" class="quiz-cancel">VOLVER</button>
+                </div>
+
+                <div id="complete-overlay" class="complete-overlay" role="dialog" aria-modal="true">
+                    <div class="complete-panel">
+                        <div class="complete-title">¡PROYECTO COMPLETADO! 🏆</div>
+                        <div class="complete-text">Felicidades, Ingeniero! Has navegado con éxito</div>
+                        <button id="btn-complete-home" class="quiz-cancel">VOLVER AL INICIO</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="screen-pregunta-id" class="screen">
+            <div class="content">
+                <img src="Conexiones futuristas en red.png" alt="Pregunta ID" class="bg-image">
+                <button id="btn-volver-pregunta-id" class="back-button">VOLVER</button>
+                <div class="quiz-panel">
+                    <div class="quiz-title">Pregunta</div>
+                    <div class="quiz-question">¿Cuál es el primer paso para construir el módulo de Identidad?</div>
+                    <button class="quiz-option" data-quiz="id" data-option="A">A) Diseñar la base de datos de Usuarios y Roles</button>
+                    <button class="quiz-option" data-quiz="id" data-option="B">B) Desarrollar la API de Autenticación</button>
+                    <button class="quiz-option" data-quiz="id" data-option="C">C) Integrar con el proveedor KYC</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="screen-pregunta-tr" class="screen">
+            <div class="content">
+                <img src="Conexiones futuristas en red.png" alt="Pregunta TR" class="bg-image">
+                <button id="btn-volver-pregunta-tr" class="back-button">VOLVER</button>
+                <div class="quiz-panel">
+                    <div class="quiz-title">Pregunta</div>
+                    <div class="quiz-question">¿Cuál es el primer paso para construir el módulo Transaccional?</div>
+                    <button class="quiz-option" data-quiz="tr" data-option="A">A) Diseñar la base de datos Transaccional</button>
+                    <button class="quiz-option" data-quiz="tr" data-option="B">B) Desarrollar la lógica de Cuentas</button>
+                    <button class="quiz-option" data-quiz="tr" data-option="C">C) Desarrollar el registro de Movimientos</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
         <!-- Capa de Transición -->
         <div id="transition-overlay"></div>
