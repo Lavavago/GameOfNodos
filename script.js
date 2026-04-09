@@ -198,24 +198,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    function goToInicio() {
+        resetMapProgress();
+        changeScreen('inicio');
+    }
+
     fastClick(btnJugar, () => changeScreen('elegirPersonaje'));
     fastClick(btnInstrucciones, () => changeScreen('instrucciones'));
 
-    fastClick(btnVolverInst, () => changeScreen('inicio'));
+    fastClick(btnVolverInst, () => goToInicio());
     fastClick(btnContinuarInst, () => changeScreen('elegirPersonaje'));
-    fastClick(btnVolverPersonaje, () => changeScreen('inicio'));
-    fastClick(btnVolverJuego, () => changeScreen('inicio'));
+    fastClick(btnVolverPersonaje, () => goToInicio());
+    fastClick(btnVolverJuego, () => goToInicio());
     fastClick(btnVolverVideo, () => {
         finalVideo.pause();
         finalVideo.currentTime = 0;
-        changeScreen('inicio');
+        goToInicio();
     });
-    fastClick(btnVolverMapa, () => changeScreen('inicio'));
+    fastClick(btnVolverMapa, () => goToInicio());
     fastClick(btnVolverPreguntaId, () => changeScreen('mapaNodos'));
     fastClick(btnVolverPreguntaTr, () => changeScreen('mapaNodos'));
     if (btnCompleteHome) fastClick(btnCompleteHome, () => {
         if (completeOverlay) completeOverlay.classList.remove('show');
-        changeScreen('inicio');
+        goToInicio();
     });
 
     // Evento para disparar el video final
@@ -257,6 +262,32 @@ document.addEventListener('DOMContentLoaded', () => {
     let mapViewportInitialized = false;
     let activeQuizKey = null;
 
+    function resetMapProgress() {
+        activatedNodes.rp = true;
+        activatedNodes.id = false;
+        activatedNodes.tr = false;
+        activatedNodes.su = false;
+        activatedNodes.ct = false;
+        activatedNodes.in = false;
+        activatedNodes.ci = false;
+
+        activeQuizKey = null;
+        if (mapQuiz) mapQuiz.classList.add('hidden');
+        if (completeOverlay) completeOverlay.classList.remove('show');
+        if (toast) toast.classList.remove('show');
+
+        mapPosition = 'rp';
+
+        if (screens.mapaNodos && screens.mapaNodos.classList.contains('active')) {
+            updateNodeAvailability();
+            updateLineStates();
+            updateLines();
+            syncSelectedCharacter();
+            positionCharacterAt('rp');
+            scrollToNode('rp', 'auto');
+        }
+    }
+
     const quizDefs = {
         id: {
             question: '¿Cuál es el primer paso para construir el módulo de Identidad?',
@@ -270,30 +301,30 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         tr: {
             question: '¿Cuál es el primer paso para construir el módulo Transaccional?',
-            a: 'A) Diseñar la base de datos Transaccional',
-            b: 'B) Desarrollar la lógica de Cuentas',
+            a: 'A) Desarrollar la lógica de Cuentas',
+            b: 'B) Diseñar la base de datos Transaccional',
             c: 'C) Desarrollar el registro de Movimientos',
-            correct: 'A',
+            correct: 'B',
             success: 'tr',
             failStay: 'rp',
             failMsg: 'Respuesta incorrecta. Sigues en RP.'
         },
         su: {
             question: 'Una vez validada la identidad del usuario, ¿qué módulo permite gestionar su nivel de acceso y pagos recurrentes?',
-            a: 'A) Integrar la Pasarela de Pagos y gestión de Membresías (SU).',
-            b: 'B) Cambiar el fondo de pantalla de la App.',
-            c: 'C) Reinstalar el sistema operativo.',
-            correct: 'A',
+            a: 'A) Cambiar el fondo de pantalla de la App.',
+            b: 'B) Reinstalar el sistema operativo.',
+            c: 'C) Integrar la Pasarela de Pagos y gestión de Membresías (SU).',
+            correct: 'C',
             success: 'su',
             failStay: 'id',
             failMsg: 'Respuesta incorrecta. Sigues en ID.'
         },
         ct: {
             question: 'Después de registrar un movimiento bancario, ¿cuál es el proceso necesario para organizar el gasto automáticamente?',
-            a: 'A) Implementar el Motor de Categorización de gastos (CT).',
+            a: 'A) Formatear la base de datos.',
             b: 'B) Enviar un mensaje de texto al banco.',
-            c: 'C) Formatear la base de datos.',
-            correct: 'A',
+            c: 'C) Implementar el Motor de Categorización de gastos (CT).',
+            correct: 'C',
             success: 'ct',
             failStay: 'tr',
             failMsg: 'Respuesta incorrecta. Sigues en TR.'
@@ -310,10 +341,10 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         in_ct: {
             question: 'Ahora que los gastos están categorizados (CT), ¿qué paso es vital para que estos datos se unifiquen con los reportes y el balance general en el módulo de integración?',
-            a: 'A) Sincronizar el motor de categorización con el bus de datos central del proyecto.',
-            b: 'B) Borrar el historial de transacciones para limpiar la base de datos.',
+            a: 'A) Borrar el historial de transacciones para limpiar la base de datos.',
+            b: 'B) Sincronizar el motor de categorización con el bus de datos central del proyecto.',
             c: 'C) Pedirle al usuario que sume sus gastos manualmente.',
-            correct: 'A',
+            correct: 'B',
             success: 'in',
             failStay: 'ct',
             failMsg: 'Respuesta incorrecta. Sigues en CT.'
@@ -336,42 +367,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initMapViewport() {
         if (!mapViewport || !mapCanvas) return;
-        if (mapViewportInitialized) return;
-        mapViewportInitialized = true;
+        if (!mapViewportInitialized) {
+            mapViewportInitialized = true;
+
+            let isPanning = false;
+            let startX = 0;
+            let startY = 0;
+            let startScrollTop = 0;
+
+            mapViewport.addEventListener('pointerdown', (e) => {
+                if (e.button !== 0) return;
+                if (e.target.closest('.node-btn, .quiz-option, .quiz-cancel, .back-button')) return;
+                isPanning = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                startScrollTop = mapViewport.scrollTop;
+                mapViewport.setPointerCapture(e.pointerId);
+            });
+
+            mapViewport.addEventListener('pointermove', (e) => {
+                if (!isPanning) return;
+                const dy = e.clientY - startY;
+                mapViewport.scrollTop = startScrollTop - dy;
+            });
+
+            mapViewport.addEventListener('pointerup', (e) => {
+                if (!isPanning) return;
+                isPanning = false;
+                try {
+                    mapViewport.releasePointerCapture(e.pointerId);
+                } catch {}
+            });
+        }
 
         mapViewport.scrollLeft = 0;
-        mapViewport.scrollTop = Math.max(0, (mapCanvas.clientHeight - mapViewport.clientHeight) / 2);
-
-        let isPanning = false;
-        let startX = 0;
-        let startY = 0;
-        let startScrollLeft = 0;
-        let startScrollTop = 0;
-
-        mapViewport.addEventListener('pointerdown', (e) => {
-            if (e.button !== 0) return;
-            if (e.target.closest('.node-btn, .quiz-option, .quiz-cancel, .back-button')) return;
-            isPanning = true;
-            startX = e.clientX;
-            startY = e.clientY;
-            startScrollLeft = mapViewport.scrollLeft;
-            startScrollTop = mapViewport.scrollTop;
-            mapViewport.setPointerCapture(e.pointerId);
-        });
-
-        mapViewport.addEventListener('pointermove', (e) => {
-            if (!isPanning) return;
-            const dy = e.clientY - startY;
-            mapViewport.scrollTop = startScrollTop - dy;
-        });
-
-        mapViewport.addEventListener('pointerup', (e) => {
-            if (!isPanning) return;
-            isPanning = false;
-            try {
-                mapViewport.releasePointerCapture(e.pointerId);
-            } catch {}
-        });
+        scrollToNode(mapPosition, 'auto');
     }
 
     function getMapAnchor(position) {
@@ -385,12 +415,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
-    function scrollToNode(position) {
+    function scrollToNode(position, behavior = 'smooth') {
         if (!mapViewport) return;
         if (!screens.mapaNodos.classList.contains('active')) return;
         const anchor = getMapAnchor(position);
         if (!anchor) return;
-        anchor.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        anchor.scrollIntoView({ behavior, block: 'center', inline: 'center' });
     }
 
     function updateNodeAvailability() {
