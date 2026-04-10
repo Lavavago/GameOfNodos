@@ -214,6 +214,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const lineInCi = document.getElementById('line-in-ci');
     const completeOverlay = document.getElementById('complete-overlay');
     const btnCompleteHome = document.getElementById('btn-complete-home');
+    const penaltyOverlay = document.getElementById('penalty-overlay');
+    const penaltySecondsEl = document.getElementById('penalty-seconds');
+    let wrongStreak = 0;
+    let penaltyActive = false;
+    let penaltyInterval = null;
+
+    function startPenalty(seconds) {
+        if (!penaltyOverlay || !penaltySecondsEl) return;
+        if (penaltyInterval) {
+            clearInterval(penaltyInterval);
+            penaltyInterval = null;
+        }
+        penaltyActive = true;
+        let remaining = Math.max(1, Math.floor(seconds));
+        penaltySecondsEl.textContent = String(remaining);
+        penaltyOverlay.classList.add('show');
+        penaltyInterval = setInterval(() => {
+            remaining -= 1;
+            penaltySecondsEl.textContent = String(Math.max(0, remaining));
+            if (remaining <= 0) {
+                clearInterval(penaltyInterval);
+                penaltyInterval = null;
+                penaltyOverlay.classList.remove('show');
+                penaltyActive = false;
+            }
+        }, 1000);
+    }
 
     function getCenterInCanvas(elem) {
         if (!mapCanvas) return null;
@@ -838,6 +865,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCarousel();
 
     function openMapQuiz(key) {
+        if (penaltyActive) return;
         if (!mapQuiz || !mapQuizQuestion || !mapQuizA || !mapQuizB || !mapQuizC) return;
         const def = quizDefs[key];
         if (!def) return;
@@ -860,11 +888,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!def) return;
         closeMapQuiz();
         if (option !== def.correct) {
+            wrongStreak += 1;
+            const seconds = wrongStreak === 1 ? 5 : 10;
             const msg = (def.failMsgs && def.failMsgs[option]) ? def.failMsgs[option] : def.failMsg;
             if (msg) showToast(msg, 'error');
             setMapPosition(def.failStay);
+            startPenalty(seconds);
             return;
         }
+        wrongStreak = 0;
         activatedNodes[def.success] = true;
         setMapPosition(def.success);
         if (def.success === 'ci') {
@@ -885,26 +917,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mapQuizC) fastClick(mapQuizC, () => answerMapQuiz('C'));
 
     if (btnNodeId) fastClick(btnNodeId, () => {
+        if (penaltyActive) return;
         if (mapPosition !== 'rp') return;
         openMapQuiz('id');
     });
 
     if (btnNodeTr) fastClick(btnNodeTr, () => {
+        if (penaltyActive) return;
         if (mapPosition !== 'rp') return;
         openMapQuiz('tr');
     });
 
     if (btnNodeSu) fastClick(btnNodeSu, () => {
+        if (penaltyActive) return;
         if (mapPosition !== 'id') return;
         openMapQuiz('su');
     });
 
     if (btnNodeCt) fastClick(btnNodeCt, () => {
+        if (penaltyActive) return;
         if (mapPosition !== 'tr') return;
         openMapQuiz('ct');
     });
 
     if (btnNodeIn) fastClick(btnNodeIn, () => {
+        if (penaltyActive) return;
         if (mapPosition === 'su') {
             openMapQuiz('in_su');
             return;
@@ -915,6 +952,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (btnNodeCi) fastClick(btnNodeCi, () => {
+        if (penaltyActive) return;
         if (!activatedNodes.in) return;
         openMapQuiz('ci');
     });
