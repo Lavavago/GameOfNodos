@@ -190,6 +190,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnNodeCt = document.getElementById('btn-node-ct');
     const btnNodeIn = document.getElementById('btn-node-in');
     const btnNodeCi = document.getElementById('btn-node-ci');
+    const btnNodeMk = document.getElementById('btn-node-mk');
+    const btnNodeSo = document.getElementById('btn-node-so');
+    const btnNodeAn = document.getElementById('btn-node-an');
+    const btnNodeMp = document.getElementById('btn-node-mp');
+    const btnNodeEs = document.getElementById('btn-node-es');
     const mapViewport = document.getElementById('map-viewport');
     const mapCanvas = document.getElementById('map-canvas');
     const btnVolverPreguntaId = document.getElementById('btn-volver-pregunta-id');
@@ -212,6 +217,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const lineSuIn = document.getElementById('line-su-in');
     const lineCtIn = document.getElementById('line-ct-in');
     const lineInCi = document.getElementById('line-in-ci');
+    const lineCiMk = document.getElementById('line-ci-mk');
+    const lineMkSo = document.getElementById('line-mk-so');
+    const lineSoAn = document.getElementById('line-so-an');
+    const lineAnMp = document.getElementById('line-an-mp');
+    const lineMpEs = document.getElementById('line-mp-es');
     const completeOverlay = document.getElementById('complete-overlay');
     const btnCompleteHome = document.getElementById('btn-complete-home');
     const penaltyOverlay = document.getElementById('penalty-overlay');
@@ -264,6 +274,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const ct = btnNodeCt ? getCenterInCanvas(btnNodeCt) : null;
         const inn = btnNodeIn ? getCenterInCanvas(btnNodeIn) : null;
         const ci = btnNodeCi ? getCenterInCanvas(btnNodeCi) : null;
+        const mk = btnNodeMk ? getCenterInCanvas(btnNodeMk) : null;
+        const so = btnNodeSo ? getCenterInCanvas(btnNodeSo) : null;
+        const an = btnNodeAn ? getCenterInCanvas(btnNodeAn) : null;
+        const mp = btnNodeMp ? getCenterInCanvas(btnNodeMp) : null;
+        const es = btnNodeEs ? getCenterInCanvas(btnNodeEs) : null;
 
         if (rp && id && lineRpId) {
             lineRpId.setAttribute('x1', rp.x);
@@ -312,6 +327,41 @@ document.addEventListener('DOMContentLoaded', () => {
             lineInCi.setAttribute('y1', inn.y);
             lineInCi.setAttribute('x2', ci.x);
             lineInCi.setAttribute('y2', ci.y);
+        }
+
+        if (ci && mk && lineCiMk) {
+            lineCiMk.setAttribute('x1', ci.x);
+            lineCiMk.setAttribute('y1', ci.y);
+            lineCiMk.setAttribute('x2', mk.x);
+            lineCiMk.setAttribute('y2', mk.y);
+        }
+
+        if (mk && so && lineMkSo) {
+            lineMkSo.setAttribute('x1', mk.x);
+            lineMkSo.setAttribute('y1', mk.y);
+            lineMkSo.setAttribute('x2', so.x);
+            lineMkSo.setAttribute('y2', so.y);
+        }
+
+        if (so && an && lineSoAn) {
+            lineSoAn.setAttribute('x1', so.x);
+            lineSoAn.setAttribute('y1', so.y);
+            lineSoAn.setAttribute('x2', an.x);
+            lineSoAn.setAttribute('y2', an.y);
+        }
+
+        if (an && mp && lineAnMp) {
+            lineAnMp.setAttribute('x1', an.x);
+            lineAnMp.setAttribute('y1', an.y);
+            lineAnMp.setAttribute('x2', mp.x);
+            lineAnMp.setAttribute('y2', mp.y);
+        }
+
+        if (mp && es && lineMpEs) {
+            lineMpEs.setAttribute('x1', mp.x);
+            lineMpEs.setAttribute('y1', mp.y);
+            lineMpEs.setAttribute('x2', es.x);
+            lineMpEs.setAttribute('y2', es.y);
         }
     }
 
@@ -491,7 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedCharacterName = null;
     let selectedCharacterSrc = '';
     let mapPosition = 'rp';
-    const activatedNodes = { rp: true, id: false, tr: false, su: false, ct: false, in: false, ci: false };
+    const activatedNodes = { rp: true, id: false, tr: false, su: false, ct: false, in: false, ci: false, mk: false, so: false, an: false, mp: false, es: false };
     let toastTimer = null;
     let mapViewportInitialized = false;
     let activeQuizKey = null;
@@ -504,6 +554,11 @@ document.addEventListener('DOMContentLoaded', () => {
         activatedNodes.ct = false;
         activatedNodes.in = false;
         activatedNodes.ci = false;
+        activatedNodes.mk = false;
+        activatedNodes.so = false;
+        activatedNodes.an = false;
+        activatedNodes.mp = false;
+        activatedNodes.es = false;
 
         activeQuizKey = null;
         if (mapQuiz) mapQuiz.classList.add('hidden');
@@ -524,78 +579,124 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const quizDefs = {
         id: {
-            question: '¿Cuál es el primer paso para construir el módulo de Identidad?',
-            a: 'A) Diseñar la base de datos de Usuarios y Roles',
-            b: 'B) Desarrollar la API de Autenticación',
-            c: 'C) Integrar con el proveedor KYC',
+            question: '¿Por qué el nodo ID-01 (Diseño de BD) debe completarse antes que ID-02 (API de Autenticación)?',
+            a: 'A) Porque la API necesita una estructura de datos existente para autenticar usuarios',
+            b: 'B) Porque el diseño de BD es más fácil y se hace primero por costumbre',
+            c: 'C) Porque ambos pueden hacerse simultáneamente sin problema',
             correct: 'A',
             success: 'id',
             failStay: 'rp',
             failMsg: 'Respuesta incorrecta. Sigues en RP.'
         },
         tr: {
-            question: '¿Cuál es el primer paso para construir el módulo Transaccional?',
-            a: 'A) Desarrollar la lógica de Cuentas',
-            b: 'B) Diseñar la base de datos Transaccional',
-            c: 'C) Desarrollar el registro de Movimientos',
+            question: 'El nodo TR-01 tiene una holgura de H=6. ¿Qué significa eso para el proyecto?',
+            a: 'A) Que puede retrasarse hasta 6 unidades de tiempo sin afectar la fecha de entrega',
+            b: 'B) Que es un nodo crítico y cualquier retraso impacta el proyecto',
+            c: 'C) Que debe ejecutarse 6 unidades antes de lo planeado',
             correct: 'B',
             success: 'tr',
             failStay: 'rp',
             failMsg: 'Respuesta incorrecta. Sigues en RP.'
         },
         su: {
-            question: 'Una vez validada la identidad del usuario, ¿qué módulo permite gestionar su nivel de acceso y pagos recurrentes?',
-            a: 'A) Cambiar el fondo de pantalla de la App.',
-            b: 'B) Reinstalar el sistema operativo.',
-            c: 'C) Integrar la Pasarela de Pagos y gestión de Membresías (SU).',
+            question: '¿Por qué SU-01 depende directamente de RP-06 y no de ID-04?',
+            a: 'A) Porque necesita la arquitectura y contratos API definidos, no que la identidad esté completa',
+            b: 'B) Porque las suscripciones no tienen relación con la identidad del usuario',
+            c: 'C) Porque SU es independiente de toda la rama principal',
             correct: 'C',
             success: 'su',
             failStay: 'id',
             failMsg: 'Respuesta incorrecta. Sigues en ID.'
         },
         ct: {
-            question: 'Después de registrar un movimiento bancario, ¿cuál es el proceso necesario para organizar el gasto automáticamente?',
-            a: 'A) Formatear la base de datos.',
-            b: 'B) Enviar un mensaje de texto al banco.',
-            c: 'C) Implementar el Motor de Categorización de gastos (CT).',
+            question: 'CT-01 y TR-01 arrancan al mismo tiempo desde RP-06. ¿Qué concepto del grafo representa esto?',
+            a: 'A) Ejecución en paralelo — dos ramas independientes que parten del mismo nodo',
+            b: 'B) Dependencia secuencial — CT espera a que TR termine',
+            c: 'C) Ruta crítica compartida entre ambos módulos',
             correct: 'C',
             success: 'ct',
             failStay: 'tr',
             failMsg: 'Respuesta incorrecta. Sigues en TR.'
         },
         in_su: {
-            question: 'Con el sistema de pagos y membresías (SU) listo, ¿cómo vinculamos este módulo para que el sistema global reconozca los permisos del usuario?',
-            a: 'A) Realizar la integración de las API de autenticación con el servicio de suscripciones.',
-            b: 'B) Publicar la aplicación en la tienda sin probar los pagos.',
-            c: 'C) Permitir que todos los usuarios sean Premium de forma gratuita.',
+            question: 'El nodo IN-01 requiere que tanto ID-04 como SU-03 estén completos. ¿Qué tipo de dependencia es esta?',
+            a: 'A) Convergencia — un nodo que espera múltiples predecesores antes de iniciar',
+            b: 'B) Divergencia — un nodo que lanza múltiples ramas simultáneas',
+            c: 'C) Secuencial simple — depende de un solo nodo anterior',
             correct: 'A',
             success: 'in',
             failStay: 'su',
             failMsg: 'Respuesta incorrecta. Sigues en SU.'
         },
         in_ct: {
-            question: 'Ahora que los gastos están categorizados (CT), ¿qué paso es vital para que estos datos se unifiquen con los reportes y el balance general en el módulo de integración?',
-            a: 'A) Borrar el historial de transacciones para limpiar la base de datos.',
-            b: 'B) Sincronizar el motor de categorización con el bus de datos central del proyecto.',
-            c: 'C) Pedirle al usuario que sume sus gastos manualmente.',
+            question: 'IN-02 integra TR-04 y CT-03. Si CT-03 termina a tiempo pero TR-04 se retrasa 3 unidades, ¿qué ocurre?',
+            a: 'A) IN-02 no puede iniciar hasta que TR-04 termine, retrasando todo lo que depende de IN-02',
+            b: 'B) IN-02 puede iniciar con solo CT-03 completado',
+            c: 'C) El retraso de TR-04 no afecta a IN-02 porque CT-03 ya está listo',
             correct: 'B',
             success: 'in',
             failStay: 'ct',
             failMsg: 'Respuesta incorrecta. Sigues en CT.'
         },
         ci: {
-            question: 'Todos los módulos (Identidad, Transacciones y demás) han sido integrados en el nodo IN. ¿Cuál es la acción final necesaria para realizar el cierre formal (CI) y entregar el software al cliente?',
-            a: 'A) Realizar el despliegue a Producción y firmar el acta de aceptación con el cliente.',
-            b: 'B) Dejar el código en el computador de desarrollo y apagarlo.',
-            c: 'C) Empezar a programar una aplicación diferente sin avisar.',
+            question: 'CI-01 (Pruebas E2E) tiene H=0 y depende de AH-04, IN-02, IN-03 e IN-04. ¿Qué implica esto?',
+            a: 'A) Que todos esos módulos deben estar 100% listos; cualquier retraso en uno retrasa el cierre completo',
+            b: 'B) Que CI-01 puede iniciar cuando al menos dos de esos nodos estén listos',
+            c: 'C) Que CI-01 tiene margen para esperar porque está al final del proyecto',
             correct: 'A',
             success: 'ci',
             failStay: 'in',
-            failMsg: '',
-            failMsgs: {
-                B: 'El cliente nunca recibió el producto',
-                C: 'Abandono de proyecto'
-            }
+            failMsg: 'Respuesta incorrecta. Sigues en IN.'
+        },
+        mk: {
+            question: '¿Por qué MK no aparece en la ruta crítica del grafo de FinTrack?',
+            a: 'A) Porque tiene holgura — su retraso no impacta directamente la fecha de entrega del software',
+            b: 'B) Porque marketing no es importante para una startup FinTech',
+            c: 'C) Porque MK depende de CI y por eso queda fuera del grafo',
+            correct: 'C',
+            success: 'mk',
+            failStay: 'ci',
+            failMsg: 'Respuesta incorrecta. Sigues en CI.'
+        },
+        so: {
+            question: 'En el grafo, SO es un nodo posterior al lanzamiento (CI-05). ¿Qué concepto representa su posición?',
+            a: 'A) Una actividad sucesora que solo puede iniciar después de que el producto esté en producción',
+            b: 'B) Una actividad paralela que se ejecuta desde el inicio del proyecto',
+            c: 'C) Un nodo crítico que bloquea el lanzamiento si no está listo',
+            correct: 'A',
+            success: 'so',
+            failStay: 'mk',
+            failMsg: 'Respuesta incorrecta. Sigues en MK.'
+        },
+        an: {
+            question: 'El nodo RE (Reportes) tiene H=12 en sus primeras etapas. ¿Qué decisión estratégica permite esto?',
+            a: 'A) Reasignar temporalmente recursos de RE a nodos críticos sin retrasar el proyecto',
+            b: 'B) Eliminar el módulo de reportes del alcance del proyecto',
+            c: 'C) Adelantar RE para que se vuelva parte de la ruta crítica',
+            correct: 'B',
+            success: 'an',
+            failStay: 'so',
+            failMsg: 'Respuesta incorrecta. Sigues en SO.'
+        },
+        mp: {
+            question: 'RP-04 (Onboarding) tiene H=0 y consume 12 unidades de tiempo. ¿Qué recomendaría el análisis PERT para este nodo?',
+            a: 'A) Optimizarlo o automatizarlo porque es crítico y consume mucho tiempo en la ruta',
+            b: 'B) Ignorarlo porque es solo capacitación y no afecta el desarrollo técnico',
+            c: 'C) Moverlo al final del proyecto para no bloquear las fases técnicas',
+            correct: 'C',
+            success: 'mp',
+            failStay: 'an',
+            failMsg: 'Respuesta incorrecta. Sigues en AN.'
+        },
+        es: {
+            question: 'El proyecto tiene una desviación estándar total de ~4.6 unidades. ¿Qué significa para la fecha de entrega?',
+            a: 'A) Que existe incertidumbre estadística — la entrega real podría variar alrededor de las 124 unidades esperadas',
+            b: 'B) Que el proyecto definitivamente terminará en exactamente 124 unidades',
+            c: 'C) Que el proyecto está mal planificado y debe rehacerse',
+            correct: 'B',
+            success: 'es',
+            failStay: 'mp',
+            failMsg: 'Respuesta incorrecta. Sigues en MP.'
         }
     };
 
@@ -645,6 +746,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (position === 'ct') return btnNodeCt;
         if (position === 'in') return btnNodeIn;
         if (position === 'ci') return btnNodeCi;
+        if (position === 'mk') return btnNodeMk;
+        if (position === 'so') return btnNodeSo;
+        if (position === 'an') return btnNodeAn;
+        if (position === 'mp') return btnNodeMp;
+        if (position === 'es') return btnNodeEs;
         if (position === 'rp') return nodeRp;
         return null;
     }
@@ -663,7 +769,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnNodeSu) btnNodeSu.disabled = mapPosition !== 'id';
         if (btnNodeCt) btnNodeCt.disabled = mapPosition !== 'tr';
         if (btnNodeIn) btnNodeIn.disabled = !(mapPosition === 'su' || mapPosition === 'ct');
-        if (btnNodeCi) btnNodeCi.disabled = !activatedNodes.in;
+        if (btnNodeCi) btnNodeCi.disabled = !(mapPosition === 'in' && activatedNodes.in);
+        if (btnNodeMk) btnNodeMk.disabled = !(mapPosition === 'ci' && activatedNodes.ci);
+        if (btnNodeSo) btnNodeSo.disabled = !(mapPosition === 'mk' && activatedNodes.mk);
+        if (btnNodeAn) btnNodeAn.disabled = !(mapPosition === 'so' && activatedNodes.so);
+        if (btnNodeMp) btnNodeMp.disabled = !(mapPosition === 'an' && activatedNodes.an);
+        if (btnNodeEs) btnNodeEs.disabled = !(mapPosition === 'mp' && activatedNodes.mp);
     }
 
     function setLineState(line, active) {
@@ -680,6 +791,11 @@ document.addEventListener('DOMContentLoaded', () => {
         setLineState(lineSuIn, activatedNodes.in && activatedNodes.su);
         setLineState(lineCtIn, activatedNodes.in && activatedNodes.ct);
         setLineState(lineInCi, activatedNodes.ci);
+        setLineState(lineCiMk, activatedNodes.mk);
+        setLineState(lineMkSo, activatedNodes.so);
+        setLineState(lineSoAn, activatedNodes.an);
+        setLineState(lineAnMp, activatedNodes.mp);
+        setLineState(lineMpEs, activatedNodes.es);
     }
 
     function positionCharacterAt(position) {
@@ -752,6 +868,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (mapStatusText) mapStatusText.textContent = 'Nodo IN activado';
         } else if (nextPosition === 'ci') {
             if (mapStatusText) mapStatusText.textContent = 'Nodo CI activado';
+        } else if (nextPosition === 'mk') {
+            if (mapStatusText) mapStatusText.textContent = 'Nodo MK activado';
+        } else if (nextPosition === 'so') {
+            if (mapStatusText) mapStatusText.textContent = 'Nodo SO activado';
+        } else if (nextPosition === 'an') {
+            if (mapStatusText) mapStatusText.textContent = 'Nodo AN activado';
+        } else if (nextPosition === 'mp') {
+            if (mapStatusText) mapStatusText.textContent = 'Nodo MP activado';
+        } else if (nextPosition === 'es') {
+            if (mapStatusText) mapStatusText.textContent = 'Nodo ES activado';
         }
     }
 
@@ -899,7 +1025,7 @@ document.addEventListener('DOMContentLoaded', () => {
         wrongStreak = 0;
         activatedNodes[def.success] = true;
         setMapPosition(def.success);
-        if (def.success === 'ci') {
+        if (def.success === 'es') {
             if (completeOverlay) completeOverlay.classList.add('show');
             markFinishedOnce();
             setTimeout(() => {
@@ -953,8 +1079,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnNodeCi) fastClick(btnNodeCi, () => {
         if (penaltyActive) return;
+        if (mapPosition !== 'in') return;
         if (!activatedNodes.in) return;
         openMapQuiz('ci');
+    });
+
+    if (btnNodeMk) fastClick(btnNodeMk, () => {
+        if (penaltyActive) return;
+        if (mapPosition !== 'ci') return;
+        if (!activatedNodes.ci) return;
+        openMapQuiz('mk');
+    });
+
+    if (btnNodeSo) fastClick(btnNodeSo, () => {
+        if (penaltyActive) return;
+        if (mapPosition !== 'mk') return;
+        if (!activatedNodes.mk) return;
+        openMapQuiz('so');
+    });
+
+    if (btnNodeAn) fastClick(btnNodeAn, () => {
+        if (penaltyActive) return;
+        if (mapPosition !== 'so') return;
+        if (!activatedNodes.so) return;
+        openMapQuiz('an');
+    });
+
+    if (btnNodeMp) fastClick(btnNodeMp, () => {
+        if (penaltyActive) return;
+        if (mapPosition !== 'an') return;
+        if (!activatedNodes.an) return;
+        openMapQuiz('mp');
+    });
+
+    if (btnNodeEs) fastClick(btnNodeEs, () => {
+        if (penaltyActive) return;
+        if (mapPosition !== 'mp') return;
+        if (!activatedNodes.mp) return;
+        openMapQuiz('es');
     });
 
     // --- Lógica de la Intro ---

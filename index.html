@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Game of Nodes</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20260410">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 </head>
 <body>
@@ -167,6 +167,11 @@
                             <line id="line-su-in" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
                             <line id="line-ct-in" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
                             <line id="line-in-ci" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
+                            <line id="line-ci-mk" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
+                            <line id="line-mk-so" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
+                            <line id="line-so-an" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
+                            <line id="line-an-mp" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
+                            <line id="line-mp-es" class="node-line" x1="0" y1="0" x2="0" y2="0"></line>
                         </svg>
 
                         <button id="btn-node-id" class="node-btn node-id" aria-label="Nodo ID">
@@ -189,6 +194,26 @@
 
                         <button id="btn-node-ci" class="node-btn node-ci" aria-label="Nodo CI">
                             <img src="CI azul-Photoroom.png" alt="CI">
+                        </button>
+
+                        <button id="btn-node-mk" class="node-btn node-mk" aria-label="Nodo MK">
+                            <img src="mk.png" alt="MK">
+                        </button>
+
+                        <button id="btn-node-so" class="node-btn node-so" aria-label="Nodo SO">
+                            <img src="so.png" alt="SO">
+                        </button>
+
+                        <button id="btn-node-an" class="node-btn node-an" aria-label="Nodo AN">
+                            <img src="an.png" alt="AN">
+                        </button>
+
+                        <button id="btn-node-mp" class="node-btn node-mp" aria-label="Nodo MP">
+                            <img src="mp.png" alt="MP">
+                        </button>
+
+                        <button id="btn-node-es" class="node-btn node-es" aria-label="Nodo ES">
+                            <img src="es.png" alt="ES">
                         </button>
 
                         <div id="node-rp" class="node-rp" aria-hidden="true">
@@ -282,6 +307,6 @@
             </form>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script src="script.js?v=20260410"></script>
 </body>
 </html>

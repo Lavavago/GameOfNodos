@@ -734,19 +734,33 @@ body, html {
 
 .map-canvas {
     position: relative;
+    --map-extra-top: 320px;
+    --map-bg-height: 1200px;
     width: 100%;
     max-width: 520px;
-    height: 1600px;
+    height: calc(var(--map-extra-top) + var(--map-bg-height));
     background-color: #000;
     margin: 0 auto;
 }
 
-.map-bg {
+.map-canvas::before {
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 45%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.96) 0%, rgba(0, 0, 0, 0.78) 45%, rgba(0, 0, 0, 0) 100%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.map-bg {
+    position: absolute;
+    top: var(--map-extra-top);
+    left: 0;
+    width: 100%;
+    height: var(--map-bg-height);
     object-fit: cover;
     background-color: #000;
 }
@@ -760,6 +774,9 @@ body, html {
     outline: none;
     z-index: 50;
     touch-action: manipulation;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .node-btn img,
@@ -775,38 +792,84 @@ body, html {
     transform: scale(0.95);
 }
 
+.node-mk {
+    top: 140px;
+    left: 28%;
+    transform: translate(-50%, -50%);
+}
+
+.node-so {
+    top: 140px;
+    left: 72%;
+    transform: translate(-50%, -50%);
+}
+
+.node-an {
+    top: 270px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.node-mp {
+    top: 320px;
+    left: 76%;
+    transform: translate(-50%, -50%);
+}
+
+.node-es {
+    top: 420px;
+    left: 88%;
+    transform: translate(-50%, -50%);
+}
+
+.node-mk img,
+.node-so img,
+.node-an img,
+.node-mp img,
+.node-es img {
+    display: block;
+    width: clamp(72px, 20vw, 150px);
+    height: auto;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 18px rgba(0, 255, 255, 0.7));
+}
+
 .node-id {
-    top: 38%;
+    width: clamp(120px, 34vw, 220px);
+    height: clamp(120px, 34vw, 220px);
+    top: calc(var(--map-extra-top) + 300px);
     left: 22%;
     transform: translate(-50%, -50%);
 }
 
 .node-tr {
-    top: 38%;
+    width: clamp(120px, 34vw, 220px);
+    height: clamp(120px, 34vw, 220px);
+    top: calc(var(--map-extra-top) + 300px);
     left: 78%;
     transform: translate(-50%, -50%);
 }
 
 .node-su {
-    top: 14%;
+    top: calc(var(--map-extra-top) + 170px);
     left: 22%;
     transform: translate(-50%, -50%);
 }
 
 .node-ct {
-    top: 14%;
+    top: calc(var(--map-extra-top) + 170px);
     left: 78%;
     transform: translate(-50%, -50%);
 }
 
 .node-in {
-    top: 4%;
+    top: calc(var(--map-extra-top) + 48px);
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
 .node-ci {
-    top: 4%;
+    top: calc(var(--map-extra-top) + 48px);
     left: 18%;
     transform: translate(-50%, -50%);
 }
@@ -926,7 +989,7 @@ body, html {
 
 .node-rp {
     position: absolute;
-    top: 68%;
+    top: calc(var(--map-extra-top) + 520px);
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 40;
@@ -1059,6 +1122,7 @@ body, html {
     line-height: 1.3;
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.35);
     margin-bottom: 14px;
+    white-space: pre-line;
 }
 
 .quiz-option {
