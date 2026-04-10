@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .not('finished_at', 'is', null)
             .order('finished_at', { ascending: true })
             .order('created_at', { ascending: true })
-            .limit(50);
+            .range(0, 999);
         if (error) {
             if (rankingList) rankingList.textContent = 'Error cargando ranking.';
             showToast('Error cargando ranking.', 'error');
