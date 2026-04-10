@@ -96,8 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .from('sessions')
             .select('id,name,created_at,finished_at')
             .eq('match_id', matchId)
-            .not('finished_at', 'is', null)
-            .order('finished_at', { ascending: true })
+            .order('finished_at', { ascending: true, nullsFirst: false })
             .order('created_at', { ascending: true })
             .range(0, 999);
         if (error) {
@@ -120,11 +119,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         rows.forEach((row, idx) => {
             const created = new Date(row.created_at);
-            const finished = new Date(row.finished_at);
-            const ms = finished.getTime() - created.getTime();
+            const isFinished = Boolean(row.finished_at);
+            const durationText = isFinished
+                ? formatDuration(new Date(row.finished_at).getTime() - created.getTime())
+                : 'EN JUEGO';
 
             const item = document.createElement('div');
-            item.className = `ranking-row${idx === 0 ? ' top1' : ''}`;
+            item.className = `ranking-row${idx === 0 ? ' top1' : ''}${isFinished ? '' : ' pending'}`;
             if (me && row.id === me) item.style.borderColor = 'rgba(72, 255, 166, 0.9)';
 
             const pos = document.createElement('div');
@@ -136,8 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
             name.textContent = row.name || 'Equipo';
 
             const time = document.createElement('div');
-            time.className = 'rank-time';
-            time.textContent = formatDuration(ms);
+            time.className = `rank-time${isFinished ? '' : ' pending'}`;
+            time.textContent = durationText;
 
             item.appendChild(pos);
             item.appendChild(name);

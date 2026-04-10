@@ -482,6 +482,15 @@ body, html {
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.35);
 }
 
+.ranking-row.pending {
+    opacity: 0.85;
+}
+
+.rank-time.pending {
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: none;
+}
+
 .skip-button {
     position: absolute;
     bottom: 50px;
