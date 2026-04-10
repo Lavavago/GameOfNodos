@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const rankingList = document.getElementById('ranking-list');
     let rankingPollTimer = null;
+    let lastRankingSignature = '';
     let finishUpdateInFlight = false;
     let finishedAtMarked = false;
 
@@ -148,11 +149,15 @@ document.addEventListener('DOMContentLoaded', () => {
     async function startRankingPolling() {
         if (rankingPollTimer) clearInterval(rankingPollTimer);
         if (rankingList) rankingList.textContent = 'CARGANDO...';
+        lastRankingSignature = '';
 
         const tick = async () => {
             if (!screens.puestos || !screens.puestos.classList.contains('active')) return;
             const rows = await fetchRanking();
             if (!rows) return;
+            const signature = rows.map(r => `${r.id}|${r.finished_at}|${r.name}`).join(';');
+            if (signature === lastRankingSignature) return;
+            lastRankingSignature = signature;
             renderRanking(rows);
         };
 

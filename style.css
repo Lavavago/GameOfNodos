@@ -481,7 +481,6 @@ body, html {
 .ranking-row.top1 {
     border-color: rgba(0, 255, 255, 0.9);
     box-shadow: 0 0 18px rgba(0, 255, 255, 0.2);
-    animation: pulseGlow 1.2s infinite;
 }
 
 .rank-pos {
