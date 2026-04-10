@@ -451,7 +451,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Lógica del Selector de Personajes ---
     const track = document.getElementById('character-track');
     const items = document.querySelectorAll('.character-item');
-    const dots = document.querySelectorAll('.dot');
     const activeCharImg = document.getElementById('active-character-img');
     
     // Mapeo de personajes a sus imágenes
@@ -750,23 +749,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Actualizar dots
-        dots.forEach((dot, index) => {
-            if (index === currentIndex) {
-                dot.classList.add('active');
-            } else {
-                dot.classList.remove('active');
-            }
-        });
+        // Sin dots para no interferir con el botón JUGAR
     }
 
-    // Permitir clic en los dots
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => {
-            currentIndex = index;
-            updateCarousel();
-        });
-    });
+    // Sin listeners de dots: la navegación es por swipe en pantalla
 
     // Eventos de Touch
     track.addEventListener('touchstart', (e) => {
