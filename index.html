@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Game of Nodes</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 </head>
 <body>
     <div id="game-container">
@@ -23,6 +24,18 @@
                 </video>
                 <!-- Botón para saltar intro (opcional para UX) -->
                 <button id="btn-skip-intro" class="skip-button" style="display: none;">SALTAR INTRO</button>
+            </div>
+        </div>
+
+        <div id="screen-ingresa-nombre" class="screen">
+            <div class="content">
+                <img src="ingresaNombre.png" alt="Ingresa nombre" class="bg-image">
+                <div class="teamname-input-area">
+                    <input id="nombreEquipo" class="teamname-input" type="text" inputmode="text" enterkeyhint="done" autocomplete="off" autocapitalize="words" spellcheck="false">
+                </div>
+                <div class="teamname-continue-area">
+                    <button id="btn-team-continue" class="invisible-button" type="button"></button>
+                </div>
             </div>
         </div>
 
@@ -130,6 +143,19 @@
             </div>
         </div>
 
+        <div id="screen-team-name" class="screen">
+            <div class="content team-content">
+                <button id="btn-volver-team" class="back-button">VOLVER</button>
+                <div class="team-panel">
+                    <div class="team-title">INGRESA NOMBRE DEL EQUIPO</div>
+                    <form id="team-form" class="team-form">
+                        <input id="team-name-input" class="team-input" type="text" inputmode="text" enterkeyhint="done" autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="24" placeholder="Ej: Los Noders">
+                        <button id="btn-team-continue" class="team-continue" type="submit">CONTINUAR</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <div id="screen-mapa-nodos" class="screen">
             <div class="content">
                 <button id="btn-volver-mapa" class="back-button">VOLVER AL MENÚ</button>
@@ -193,10 +219,20 @@
 
                 <div id="complete-overlay" class="complete-overlay" role="dialog" aria-modal="true">
                     <div class="complete-panel">
-                        <div class="complete-title">¡PROYECTO COMPLETADO! 🏆</div>
-                        <div class="complete-text">Felicidades, Ingeniero! Has navegado con éxito</div>
-                        <button id="btn-complete-home" class="quiz-cancel">VOLVER AL INICIO</button>
+                        <div class="complete-title">¡LLEGASTE AL NODO FINAL!</div>
+                        <div class="complete-text">Espera a tus compañeros. Los rankearemos por tiempo de llegada: el primero será el #1, luego el #2, etc.</div>
+                        <div class="complete-loading">CARGANDO RANKING...</div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="screen-puestos" class="screen">
+            <div class="content">
+                <div class="ranking-screen">
+                    <div class="ranking-title">RANKING</div>
+                    <div class="ranking-subtitle">Ordenado por tiempo de llegada</div>
+                    <div id="ranking-list" class="ranking-list">CARGANDO...</div>
                 </div>
             </div>
         </div>
@@ -233,6 +269,15 @@
 
         <!-- Capa de Transición -->
         <div id="transition-overlay"></div>
+    </div>
+    <div id="team-modal" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="team-panel">
+            <div class="team-title">INGRESA NOMBRE DEL EQUIPO</div>
+            <form id="team-form-modal" class="team-form">
+                <input id="team-name-input-modal" class="team-input" type="text" inputmode="text" enterkeyhint="done" autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="24" placeholder="Ej: Los Noders">
+                <button id="btn-team-continue-modal" class="team-continue" type="submit">CONTINUAR</button>
+            </form>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
